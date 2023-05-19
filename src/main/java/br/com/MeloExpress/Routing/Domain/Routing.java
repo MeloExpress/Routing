@@ -22,12 +22,10 @@ public class Routing {
 
     private UUID routingCode;
 
-    @OneToOne(targetEntity = RoutingEmployee.class)
     private UUID routingEmployee;
 
-    @OneToOne(targetEntity = RoutingFleet.class)
     private UUID routingFleet;
 
-    @OneToMany(mappedBy = "routing", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany
     private List<RoutingCollect> routingCollect = new ArrayList<>();
 }

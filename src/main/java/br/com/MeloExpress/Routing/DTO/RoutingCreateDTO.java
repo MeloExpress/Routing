@@ -8,8 +8,8 @@ import java.util.UUID;
 public record RoutingCreateDTO(
 
         UUID routingCode,
-        UUID routingEmployee,
-        UUID routingFleet,
+        UUID routingEmployeeCode,
+        UUID routingFleetCode,
         List<RoutingCollect> routingCollects
 
 ) {

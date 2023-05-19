@@ -1,5 +1,6 @@
 package br.com.MeloExpress.Routing.Domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +19,10 @@ public class RoutingCollect {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long routingCollectId;
 
-    @ManyToOne
-    private UUID collectCode;
+    private UUID routingCollectCode;
+
+    public RoutingCollect(String routingCollectCode) {
+        this.routingCollectCode = UUID.fromString(routingCollectCode);
+    }
 
 }
