@@ -95,6 +95,8 @@ public class RoutingService {
         routing.setRoutingCollect(routingCollectList);
         routingRepository.save(routing);
 
+
+        // Retornando os dados recuperados para vizualização
         RoutingAllDetailsToCreateDTO response = new RoutingAllDetailsToCreateDTO(
                 routing.getRoutingId(),
                 employeeDetails,
