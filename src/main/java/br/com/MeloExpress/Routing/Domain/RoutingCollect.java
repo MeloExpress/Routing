@@ -18,7 +18,10 @@ public class RoutingCollect {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long routingCollectId;
 
-    @ManyToOne
-    private UUID collectCode;
+    private UUID routingCollectCode;
+
+    public RoutingCollect(String routingCollectCode) {
+        this.routingCollectCode = UUID.fromString(routingCollectCode);
+    }
 
 }
