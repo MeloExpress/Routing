@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -107,4 +108,76 @@ public class RoutingService {
         return response;
 
     }
+
+    public RoutingAllDetailsToCreateDTO addCollectsToRouting(UUID routingCode, List<RoutingCollect> newCollects, String collectApiUrl) {
+        // Recuperando o roteamento existente pelo código
+        Optional<Routing> existingRoutingOptional = routingRepository.findByRoutingCode(routingCode);
+        if (existingRoutingOptional.isEmpty()) {
+            throw new IllegalArgumentException("Roteamento não encontrado.");
+        }
+        Routing existingRouting = existingRoutingOptional.get();
+
+        // Recuperando os detalhes do roteamento existente
+        RoutingEmployeeDetailsFindDTO employeeDetails = restTemplate.getForObject(employeeApiUrl + existingRouting.getRoutingEmployee(), RoutingEmployeeDetailsFindDTO.class);
+        RoutingFleetDetailsFindDTO fleetDetails = restTemplate.getForObject(fleetApiUrl + existingRouting.getRoutingFleet(), RoutingFleetDetailsFindDTO.class);
+        List<RoutingCollectDetailsFindDTO> existingCollectDetailsList = new ArrayList<>();
+        for (RoutingCollect routingCollect : existingRouting.getRoutingCollect()) {
+            String collectApiPath = collectApiUrl + routingCollect.getRoutingCollectCode();
+            RoutingCollectDetailsFindDTO collectDetails = restTemplate.getForObject(collectApiPath, RoutingCollectDetailsFindDTO.class);
+            existingCollectDetailsList.add(collectDetails);
+        }
+
+        // Recuperando os detalhes das novas coleções da API Collect
+        List<RoutingCollectDetailsFindDTO> newCollectDetailsList = new ArrayList<>();
+        for (RoutingCollect newCollect : newCollects) {
+            String collectApiPath = collectApiUrl + newCollect.getRoutingCollectCode();
+            RoutingCollectDetailsFindDTO collectDetails = restTemplate.getForObject(collectApiPath, RoutingCollectDetailsFindDTO.class);
+            newCollectDetailsList.add(collectDetails);
+        }
+
+        // Persistindo as novas coleções na tabela routing_collect
+        List<RoutingCollect> routingCollectList = new ArrayList<>();
+        for (RoutingCollectDetailsFindDTO collectDetails : newCollectDetailsList) {
+            RoutingCollect routingCollect = new RoutingCollect(routingCode.toString());
+            routingCollect.setRoutingCollectCode(collectDetails.collectCode());
+            routingCollectList.add(routingCollect);
+        }
+        routingCollectRepository.saveAll(routingCollectList);
+
+        // Atualizando o roteamento existente com as novas coleções
+        existingRouting.getRoutingCollect().addAll(routingCollectList);
+        routingRepository.save(existingRouting);
+
+        // Retornando os detalhes atualizados do roteamento
+        List<RoutingCollectDetailsFindDTO> updatedCollectDetailsList = new ArrayList<>(existingCollectDetailsList);
+        updatedCollectDetailsList.addAll(newCollectDetailsList);
+
+        RoutingAllDetailsToCreateDTO response1 = new RoutingAllDetailsToCreateDTO(
+                existingRouting.getRoutingId(),
+                employeeDetails,
+                fleetDetails,
+                existingCollectDetailsList
+        );
+
+        return response1;
+    }
+
+    public List<RoutingCollectDetailsFindDTO> getAllCollectsByRouting(UUID routingCode, String collectApiUrl) {
+        // Recuperando o roteamento existente pelo código
+        Optional<Routing> existingRoutingOptional = routingRepository.findByRoutingCode(routingCode);
+        if (existingRoutingOptional.isEmpty()) {
+            throw new IllegalArgumentException("Roteamento não encontrado.");
+        }
+        Routing existingRouting = existingRoutingOptional.get();
+
+        List<RoutingCollectDetailsFindDTO> collectDetailsList = new ArrayList<>();
+        for (RoutingCollect routingCollect : existingRouting.getRoutingCollect()) {
+            String collectApiPath = collectApiUrl + routingCollect.getRoutingCollectCode();
+            RoutingCollectDetailsFindDTO collectDetails = restTemplate.getForObject(collectApiPath, RoutingCollectDetailsFindDTO.class);
+            collectDetailsList.add(collectDetails);
+        }
+
+        return collectDetailsList;
+    }
+
 }

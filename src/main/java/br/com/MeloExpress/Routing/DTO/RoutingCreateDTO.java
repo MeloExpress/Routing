@@ -13,4 +13,7 @@ public record RoutingCreateDTO(
         List<RoutingCollect> routingCollects
 
 ) {
+    public List<RoutingCollect> getRoutingCollects() {
+        return routingCollects;
+    }
 }
