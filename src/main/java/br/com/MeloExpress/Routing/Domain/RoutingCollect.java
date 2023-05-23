@@ -1,6 +1,5 @@
 package br.com.MeloExpress.Routing.Domain;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import lombok.*;
 
