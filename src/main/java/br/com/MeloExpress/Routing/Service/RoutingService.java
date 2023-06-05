@@ -118,6 +118,7 @@ public class RoutingService {
         //Criando a mensagem JSON para o Kafka
         String routingCode = routing.getRoutingCode().toString();
         JSONObject mensagem = new JSONObject();
+        mensagem.put("reason" , routing.getReason());
         mensagem.put("routingId", routing.getRoutingId());
         mensagem.put("routingCode", routingCode);
         mensagem.put("employeeDetails", employeeDetails);
