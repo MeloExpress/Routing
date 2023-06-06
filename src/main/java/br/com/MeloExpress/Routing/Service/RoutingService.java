@@ -130,9 +130,22 @@ public class RoutingService {
             JSONObject collectDetailsToKafka = new JSONObject();
             collectDetailsToKafka.put("collectId", collect.collectId());
             collectDetailsToKafka.put("routingCollectCode", collect.collectCode());
+            collectDetailsToKafka.put("startTime", collect.startTime());
+            collectDetailsToKafka.put("endTime", collect.endTime());
+            collectDetailsToKafka.put("collectState", collect.collectState());
             collectDetailsToKafka.put("customerCode", collect.customerData().customerCode());
+            collectDetailsToKafka.put("companyName", collect.customerData().companyName());
+            collectDetailsToKafka.put("phone", collect.customerData().phone());
             collectDetailsToKafka.put("email", collect.customerData().email());
             collectDetailsToKafka.put("responsible", collect.customerData().responsible());
+            collectDetailsToKafka.put("zipCode", collect.addressData().zipCode());
+            collectDetailsToKafka.put("street", collect.addressData().street());
+            collectDetailsToKafka.put("number", collect.addressData().number());
+            collectDetailsToKafka.put("complements", collect.addressData().complements());
+            collectDetailsToKafka.put("district", collect.addressData().district());
+            collectDetailsToKafka.put("city", collect.addressData().city());
+            collectDetailsToKafka.put("state", collect.addressData().state());
+            collectDetailsToKafka.put("pointReference", collect.addressData().pointReference());
             collectDetailsListKafka.put(collectDetailsToKafka);
         }
         mensagem.put("collectDetailsList", collectDetailsListKafka);
