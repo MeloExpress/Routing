@@ -118,19 +118,22 @@ public class RoutingService {
         //Criando a mensagem JSON para o Kafka
         String routingCode = routing.getRoutingCode().toString();
         JSONObject mensagem = new JSONObject();
-        mensagem.put("reason" , routing.getReason());
-        mensagem.put("routingId", routing.getRoutingId());
+        mensagem.put("reason" , response.reason());
+        mensagem.put("routingId", response.routingId());
         mensagem.put("routingCode", routingCode);
         mensagem.put("employeeDetails", employeeDetails);
         mensagem.put("fleetDetails", fleetDetails);
 
-        List<RoutingCollect> routingCollectListKafka = routing.getRoutingCollect();
+        List<RoutingCollectDetailsFindDTO> collectDetailsListToMensageKafka = response.routingCollects();
         JSONArray collectDetailsListKafka = new JSONArray();
-        for (RoutingCollect collect : routingCollectListKafka) {
-            JSONObject collectDetails = new JSONObject();
-            collectDetails.put("routingCollectId", collect.getRoutingCollectId());
-            collectDetails.put("routingCollectCode", collect.getRoutingCollectCode());
-            collectDetailsListKafka.put(collectDetails);
+        for (RoutingCollectDetailsFindDTO collect : collectDetailsListToMensageKafka) {
+            JSONObject collectDetailsToKafka = new JSONObject();
+            collectDetailsToKafka.put("collectId", collect.collectId());
+            collectDetailsToKafka.put("routingCollectCode", collect.collectCode());
+            collectDetailsToKafka.put("customerCode", collect.customerData().customerCode());
+            collectDetailsToKafka.put("email", collect.customerData().email());
+            collectDetailsToKafka.put("responsible", collect.customerData().responsible());
+            collectDetailsListKafka.put(collectDetailsToKafka);
         }
         mensagem.put("collectDetailsList", collectDetailsListKafka);
 
