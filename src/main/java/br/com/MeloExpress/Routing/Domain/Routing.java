@@ -26,6 +26,9 @@ public class Routing {
 
     private UUID routingFleet;
 
+    @Enumerated(EnumType.STRING)
+    private Reason reason;
+
     @OneToMany
     private List<RoutingCollect> routingCollect = new ArrayList<>();
 }
